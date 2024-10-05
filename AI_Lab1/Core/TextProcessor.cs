@@ -4,10 +4,10 @@ namespace AI_Lab1.Core;
 
 public class TextProcessor
 {
-    public List<string> ProcessText(string data)
+    public List<string> ProcessText(string data, out DataSet dataSet)
     {
         var DSlb = new List<string>();
-        var dataSet = new DataSet();
+        dataSet = new DataSet();
 
         var lines = data.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -53,7 +53,7 @@ public class TextProcessor
     }
 }
 
-internal class DataSetEntry
+public class DataSetEntry
 {
     public readonly List<double> Data = new();
 
@@ -66,7 +66,7 @@ internal class DataSetEntry
     }
 }
 
-internal class DataSet
+public class DataSet
 {
     public readonly List<DataSetEntry> DataSetTable = new();
 
