@@ -8,6 +8,11 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <Button Content="Загрузить файлы" Command="{Binding LoadFilesCommand}" Width="200" Height="100" Margin="10,10,590,324" />
-        <ListBox ItemsSource="{Binding ListBoxItems}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" HorizontalAlignment="Center" Height="293" VerticalAlignment="Top" Width="780" Margin="0,131,0,0"/>
+        <ListBox ItemsSource="{Binding ListBoxItems}" HorizontalAlignment="Center" Height="293" VerticalAlignment="Top" Width="780" Margin="0,131,0,0"/>
+        <TextBox Text="{Binding InputValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+             Width="200" Height="30" HorizontalAlignment="Left" Margin="275,45,0,359" />
+        <TextBox Text="{Binding ResultValue, Mode=OneWay}"  
+             Width="200" Height="30" HorizontalAlignment="Left" Margin="518,45,0,359" 
+             IsReadOnly="True" />
     </Grid>
 </Window>

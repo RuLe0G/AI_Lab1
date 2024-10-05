@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
 using AI_Lab1.Core;
@@ -9,29 +10,49 @@ public class MyViewModel : BaseViewModel
 {
     private readonly LoadDocument m_LoadDocument;
     private readonly TextProcessor m_TextProcessor;
-    
+    private readonly LinearRegressionSystem m_LinearRegression;
+
+    private double m_A;
+    private double m_B;
+
     public ICommand LoadFilesCommand { get; }
     public ObservableCollection<string> ListBoxItems { get; }
-    private string m_SelectedItem;
-    public string SelectedItem
+    
+    private string m_InputValue;
+    public string InputValue
     {
-        get => m_SelectedItem;
+        get => m_InputValue;
         set
         {
-            m_SelectedItem = value;
-            OnPropertyChanged(nameof(SelectedItem));
+            if (m_InputValue != value)
+            {
+                m_InputValue = value;
+                OnPropertyChanged(nameof(InputValue));
 
-            ShowData(m_SelectedItem);
+                CalculateData();
+            }
         }
     }
 
+    private string m_ResultValue;
+    public string ResultValue
+    {
+        get => m_ResultValue;
+        private set
+        {
+            m_ResultValue = value;
+            OnPropertyChanged(nameof(ResultValue));
+        }
+    }
+    
     public MyViewModel()
     {
         m_LoadDocument = new LoadDocument();
         m_TextProcessor = new TextProcessor();
+        m_LinearRegression = new LinearRegressionSystem();
 
         LoadFilesCommand = new RelayCommand(LoadFiles);
-        
+
         ListBoxItems = new ObservableCollection<string>();
     }
 
@@ -39,20 +60,25 @@ public class MyViewModel : BaseViewModel
     {
         var filesContent = m_LoadDocument.LoadFile();
 
-        var data = m_TextProcessor.ProcessText(filesContent);
-        
+        var listItems = m_TextProcessor.ProcessText(filesContent, out var dataSet);
+
         ListBoxItems.Clear();
-        
-        foreach (var line in data)
+
+        foreach (var line in listItems)
         {
             ListBoxItems.Add(line);
         }
+        
+        m_LinearRegression.GetData(dataSet, out m_A, out m_B);
     }
-    public void ShowData(string selectedItem)
+    
+    
+    private void CalculateData()
     {
-        if (!string.IsNullOrEmpty(selectedItem))
-        {
-            MessageBox.Show($"Данные выбранного элемента: {selectedItem}", "Информация");
-        }
+        var inX = double.Parse(m_InputValue, CultureInfo.InvariantCulture.NumberFormat);
+        
+        var predictedValue = (m_B * inX) + m_A;
+        
+        ResultValue = predictedValue.ToString("C2");
     }
 }
