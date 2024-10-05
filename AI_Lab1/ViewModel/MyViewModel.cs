@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using AI_Lab1.Core;
 
 namespace AI_Lab1.ViewModel;
@@ -9,37 +9,50 @@ public class MyViewModel : BaseViewModel
 {
     private readonly LoadDocument m_LoadDocument;
     private readonly TextProcessor m_TextProcessor;
-
-    public ObservableCollection<string> LogMessages { get; set; }
+    
     public ICommand LoadFilesCommand { get; }
-    public string LogText => string.Join(Environment.NewLine, LogMessages);
+    public ObservableCollection<string> ListBoxItems { get; }
+    private string m_SelectedItem;
+    public string SelectedItem
+    {
+        get => m_SelectedItem;
+        set
+        {
+            m_SelectedItem = value;
+            OnPropertyChanged(nameof(SelectedItem));
 
+            ShowData(m_SelectedItem);
+        }
+    }
 
     public MyViewModel()
     {
         m_LoadDocument = new LoadDocument();
         m_TextProcessor = new TextProcessor();
-        LogMessages = new ObservableCollection<string>();
 
         LoadFilesCommand = new RelayCommand(LoadFiles);
-
-        LogConsole.LogAction = AddLogMessage;
+        
+        ListBoxItems = new ObservableCollection<string>();
     }
 
     private void LoadFiles()
     {
-        var filesContent = m_LoadDocument.LoadFiles();
+        var filesContent = m_LoadDocument.LoadFile();
 
-        foreach (var content in filesContent)
+        var data = m_TextProcessor.ProcessText(filesContent);
+        
+        ListBoxItems.Clear();
+        
+        foreach (var line in data)
         {
-            var processedText = m_TextProcessor.ProcessText(content);
-            LogConsole.Log($"Текст обработан: {processedText.Substring(0, Math.Min(50, processedText.Length))}...");
+            ListBoxItems.Add(line);
         }
     }
-
-    private void AddLogMessage(string message, SolidColorBrush color)
+    public void ShowData(string selectedItem)
     {
-        LogMessages.Add(message);
-        OnPropertyChanged(nameof(LogText));
+        if (!string.IsNullOrEmpty(selectedItem))
+        {
+            MessageBox.Show($"Данные выбранного элемента: {selectedItem}", "Информация");
+        }
     }
 }

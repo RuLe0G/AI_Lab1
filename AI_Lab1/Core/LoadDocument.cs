@@ -1,39 +1,34 @@
 using System.IO;
-using System.Text;
 using Microsoft.Win32;
 
 namespace AI_Lab1.Core;
 
 public class LoadDocument
 {
-    public List<string> LoadFiles()
+    public string LoadFile()
     {
         var openFileDialog = new OpenFileDialog
         {
-            Multiselect = true,
-            Filter = "Text files (*.txt)|*.txt",
+            Multiselect = false,
+            Filter = "Text files (*.csv)|*.csv",
             InitialDirectory = Path.Combine(Environment.CurrentDirectory, "Resources")
         };
 
-        var fileContent = new List<string>();
+        var fileContent = string.Empty;
 
         if (openFileDialog.ShowDialog() == true)
         {
-            foreach (var filename in openFileDialog.FileNames)
+            try
             {
-                try
-                {
-                    var content = File.ReadAllText(filename, Encoding.UTF8);
-                    fileContent.Add(content);
-                    LogConsole.LogSuccess($"{filename} - загружен");
-                }
-                catch (Exception ex)
-                {
-                    LogConsole.LogError($"{filename} - ошибка - {ex.Message}");
-                }
+                fileContent = File.ReadAllText(openFileDialog.FileName);
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine(ex.Message);
             }
         }
 
         return fileContent;
     }
+
 }
