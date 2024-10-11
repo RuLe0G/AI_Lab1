@@ -30,6 +30,13 @@ public class TextProcessor
             var values = line.Split(',').ToList();
 
             dataSet.AddEntry(values);
+
+            if (double.TryParse(values[1], NumberStyles.Any, CultureInfo.InvariantCulture, out var xValue) &&
+                double.TryParse(values[2], NumberStyles.Any, CultureInfo.InvariantCulture, out var yValue))
+            {
+                dataSet.XYData.Add((xValue, yValue));
+            }
+
             tmp = string.Empty;
 
             for (var i = 0; i < values.Count; i++)
@@ -49,9 +56,11 @@ public class TextProcessor
 
             DSlb.Add(tmp);
         }
+
         return DSlb;
     }
 }
+
 
 public class DataSetEntry
 {
@@ -68,11 +77,18 @@ public class DataSetEntry
 
 public class DataSet
 {
+    public List<(double X, double Y)> XYData { get; private set; } = new List<(double X, double Y)>();
+
     public readonly List<DataSetEntry> DataSetTable = new();
 
     public void AddEntry(List<string> values)
     {
         DataSetTable.Add(new DataSetEntry(values));
+    }
+
+    public (double X, double Y)[] GetXYData()
+    {
+        return XYData.ToArray();
     }
 
     public double[] GetColumn(int num)

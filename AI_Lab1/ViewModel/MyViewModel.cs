@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using AI_Lab1.Core;
 
@@ -11,6 +12,8 @@ public class MyViewModel : BaseViewModel
     private readonly LoadDocument m_LoadDocument;
     private readonly TextProcessor m_TextProcessor;
     private readonly LinearRegressionSystem m_LinearRegression;
+    
+    private DrawPlotSystem m_DrawPlotSystem;
 
     private double m_A;
     private double m_B;
@@ -45,7 +48,7 @@ public class MyViewModel : BaseViewModel
         }
     }
     
-    public MyViewModel()
+    public MyViewModel(Canvas canvas)
     {
         m_LoadDocument = new LoadDocument();
         m_TextProcessor = new TextProcessor();
@@ -54,6 +57,7 @@ public class MyViewModel : BaseViewModel
         LoadFilesCommand = new RelayCommand(LoadFiles);
 
         ListBoxItems = new ObservableCollection<string>();
+        m_DrawPlotSystem = new DrawPlotSystem(canvas);
     }
 
     private void LoadFiles()
@@ -70,15 +74,23 @@ public class MyViewModel : BaseViewModel
         }
         
         m_LinearRegression.GetData(dataSet, out m_A, out m_B);
+        
+        var data = dataSet.GetXYData();
+        
+        var maxX = data.Max(p => p.X);
+        var maxY = data.Max(p => p.Y);
+        m_DrawPlotSystem.SetData(data, maxX, maxY);
+        m_DrawPlotSystem.SetLinaerRegressionLine(0,(m_B * 0) + m_A, maxX, (m_B * maxX) + m_A);
     }
-    
-    
+
+
     private void CalculateData()
     {
-        var inX = double.Parse(m_InputValue, CultureInfo.InvariantCulture.NumberFormat);
-        
-        var predictedValue = (m_B * inX) + m_A;
-        
-        ResultValue = predictedValue.ToString("C2");
+        if(double.TryParse(m_InputValue, CultureInfo.InvariantCulture.NumberFormat, out var inX))
+        {
+            var predictedValue = (m_B * inX) + m_A;
+
+            ResultValue = predictedValue.ToString("C2");
+        }
     }
 }
