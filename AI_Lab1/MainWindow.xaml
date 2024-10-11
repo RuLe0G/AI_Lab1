@@ -5,14 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AI_Lab1"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <Button Content="Загрузить файлы" Command="{Binding LoadFilesCommand}" Width="200" Height="100" Margin="10,10,590,324" />
-        <ListBox ItemsSource="{Binding ListBoxItems}" HorizontalAlignment="Center" Height="293" VerticalAlignment="Top" Width="780" Margin="0,131,0,0"/>
+        Title="AI_Lab1" Height="480" Width="1144" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Grid HorizontalAlignment="Center" Width="1144">
+        <Button Content="Загрузить файлы" Command="{Binding LoadFilesCommand}" 
+                Height="75" Width="148" Margin="10" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <TextBox Text="{Binding InputValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-             Width="200" Height="30" HorizontalAlignment="Left" Margin="275,45,0,359" />
-        <TextBox Text="{Binding ResultValue, Mode=OneWay}"  
-             Width="200" Height="30" HorizontalAlignment="Left" Margin="518,45,0,359" 
-             IsReadOnly="True" />
+                 Width="200" HorizontalAlignment="Left" VerticalAlignment="Top" Height="63" Margin="178,22,0,0" />
+        <TextBox Text="{Binding ResultValue, Mode=OneWay}" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top" IsReadOnly="True" Height="63" Margin="400,22,0,0"/>
+        <ListBox ItemsSource="{Binding ListBoxItems}" 
+                 Margin="10,105,0,0" HorizontalAlignment="Left" Width="590" Height="349" VerticalAlignment="Top"/>
+        <Canvas x:Name="GraphCanvas" Background="White" Margin="626,10,10,10" Height="440" Width="440" />
     </Grid>
 </Window>
